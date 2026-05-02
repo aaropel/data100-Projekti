@@ -1,9 +1,8 @@
-
 wetodev.rd.tuni.fi
 Projekti [120 p.] (aikaraja su 10.5 klo 23:59)
 11–14 minutes
 
-Projektissa luodaan Suomessa rekisteröityjä autoja koskevaa dataa kuvaileva ns. "dashboard" käyttäen Metabase-raportointijärjestelmää.
+Projektissa luodaan Suomessa rekisteröityjä autoja koskevaa dataa kuvaileva ns. "dashboard" käyttäen Metabase-raportointijärjestelmää.cd 
 
 Projektin saa tehdä 1-3 hengen ryhmässä.
 1. Ajoneuvodata ja sen esikäsittely (20 pistettä)
@@ -64,3 +63,43 @@ ensirekisterointipvm 	kayttoonottopvm 	vari 	omamassa 	ajonKokPituus 	ajonLeveys
 Kun data on esikäsitelty, se kirjoitetaan lopuksi sqlite3-tietokantatiedostoon nimeltä autodata.db.
 
 Aseta kaikki edellä kuvatut askeleet suorittava Python-koodi tiedostoon autodata.py. Varmista, että kyseisen tiedoston ajaminen tapaan python autodata.py tuottaa halutunlaisen sqlite3-tietokantatiedoston.
+
+Tässä askeleessa luotu kooditiedosto autodata.py on toinen projektiin liittyen palautettavista tiedostoista. Huomaa, että tiedostoa autodata.db ei palauteta (ihan jo siitäkin syystä, että tiedostosta tulee aika iso).
+
+
+2. Metabasen asentaminen ja ajaminen
+
+Metabasen vapaan version voi ladata sen verkkosivuilta osoitteesta https://www.metabase.com/start/oss/. Se on tarjolla Docker-säiliönä tai JAR-tiedostona. Näissä ohjeissa keskitytään jälkimmäiseen vaihtoehtoon, koska se lienee teknisesti selvästi suoraviivaisempi vaihtoehto (ellet jo valmiiksi satu olemaan Docker-asiantuntija).
+
+Alla on kuvattu lyhyesti Metabasen JAR-tiedoston käyttö. Hieman tarkemmat ohjeet löytyvät mm. Metabasen ohjesivulta https://www.metabase.com/docs/latest/installation-and-operation/running-the-metabase-jar-file.
+
+JAR-tiedosto (eli Java ARchive) sisältää Java-virtuaalikoneella ajettavan ohjelman. Jotta tämä onnistuisi, on käyttämälläsi tietokoneella oltava asennettuna ns. JRE-ympäristö (eli Java Runtime Environment). Tämän voi tehdä helposti esimerkiksi sivulta https://adoptium.net/temurin/releases/, josta löytyy JRE-asennuspaketit niin Windowsille, Macille kuin Linuxillekin. Jos Java-ohjelmointikielellä ohjelmointi kiinnostaa, voit JRE:n sijaan asentaa JDK:n (Java Development Kit), joka sisältää sekä JRE-ympäristön että Java-ohjelmointityökalut (kuten Java-kääntäjän).
+
+Kun Metabasen JAR-tiedosto on ladattu ja Java JRE/JDK asennettu, voit käynnistää Metabasen avaamalla komentoikkunan, menemällä tiedoston metabase.jar sisältävään hakemistoon ja antamalla komennon java -jar metabase.jar. Tämä käynnistää paikallisen Metabase-sivuston tarjoavan verkkopalvelimen, joka käyttää oletusarvoisesti porttia 3000: pääset käsiksi Metabaseen avaamalla osoitteen http://localhost:3000/ verkkoselaimella.
+
+Kun Metabase käynnistetään ensimmäistä kertaa, pitää siihen luoda vähintään yksi käyttäjätunnus. Tässä projektissa tulee luoda käyttäjätunnus "data100@tuni.fi" ja asettaa sen salasanaksi "data100". Tämä on tärkeää, koska projektissa luodut Metabase-dashboardit jaetaan vertaisarvioijille (ja kurssin ohjaajalle) palauttamalla Metabasen oma tietokantatiedosto (jonka nimi on metabase.db.mv.db) sellaisenaan. Kyseisen tietokantatiedoston avulla kuka tahansa voi tarkastella käyttämääsi Metabase-ympäristöä (sekä siihen tallentamaasi dashboardia) kunhan on tiedossa, millä käyttäjätunnuksella ja salasanalla ympäristöön kirjaudutaan.
+
+3. Ajoneuvo-dashboardin teko Metabasella (80 pistettä [+30 bonuspistettä])
+
+Kirjaudu Metabaseen sen käyttöönoton yhteydessä luomallasi käyttäjätunnuksella data100@tuni.fi ja salasanalla data100 ja lisää siihen tietokanta, joka luetaan luvussa 1 kuvatulla tavalla luodusta sqlite3-tietokantatiedostosta autodata.db. Aseta kyseinen tietokantatiedostosamaan hakemistoon kuin metabase.jar ja varmista, että Metabase viittaa tiedostoon ilman mitään polkua muodossa autodata.db. Luo tämän jälkeen kokoelmaan "Your personal collection" (jos Metabasen käyttöliittymä on englanniksi) uusi dashboard nimeltä "Suomen autokanta", joka esittää ajoneuvodatasta erilaisia tietoja. Tehtävänannossa ei määritetä aivan tarkkaan, mitä ja miten dashboardissa tulee esittää. Dashboard pisteytetään seuraavasti (kunkin kohdan toteutus tuottaa kohdassa mainitun määrän lisäpisteitä):
+
+    +10 pistettä: dashboardissa on ainakin yksi dataa sellaisenaan taulukkomuodossa esittävä tiili.
+    +10 pistettä: dashboardissa on ainakin yksi dataa yhteenvetomaisesti (jonkinlaisia tilastollisia tunnuslukuja) taulukkomuodossa esittävä tiili.
+    +10 pistettä: dashboardissa on ainakin yksi dataa esittävä käyrämuotoinen kuvaaja.
+    +10 pistettä: dashboardissa on ainakin yksi useita käyriä samassa kuvaajassa sisältävä kuvaaja, joka vertailee datan eri piirteitä (kutakin piirrettä kohden erillinen käyrä).
+    +10 pistettä: dashboardissa on ainakin yksi datan jonkinlaista jakaumaa/osuuksia piirakka- tai pylväsdiagrammilla esittävä kuvaaja.
+    +10 pistettä: dashboardissa on ainakin yksi datan jonkinlaista jakaumaa/osuuksia kuvaava histogrammi.
+    +10 pistettä: dashboardissa on ainakin yksi datan jonkinlaista kumulatiivista määrää esittävä kuvaaja.
+    +10 pistettä: dashboardissa on ainakin yksi datan jonkin ominaisuuden maantieteellistä jakaumaa kuvaava karttakuvaaja.
+
+Edellisten kohtien mukaisten 8x10 = 80 pisteen lisäksi dashboardista voi saada maksimissaan +30 bonuspistettä, jos dashboard sisältää ansiokkaiksi koettuja elementtejä. Tällaisia voisi olla esimerkiksi sellaisen yhteenvetotiedon esittäminen, jonka johtaminen pohjadatasta vaatii hieman monimutkaisempaa laskentaa, tai muulla tavalla edistyneempi visualisointi (esim. samaan tapaan monipuolisia kuvaajia / taulukoita kuin Metabasen "E-commerce Insights"-esimerkki-dashboardissa on). Bonuspisteitä annetaan kaavalla +10 lisäpistettä per ansiokas elementti.
+
+Dashboardiin pitää sisällyttää lisäksi yksi tiili, jonka sisällä on tekstikenttä, jossa kuvataan lyhyesti dashboardin sisältö: millaisia tiiliä se sisältää (eli mitä kunkin tiilen sisällä pyritään esittämään). Jos tavoitteena on saada bonuspisteitä, tähän tulee lisätä myös ehdotus siitä, mitkä dashboardin elementit projektin tekijä (tai tekijät) itse kokee bonuspisteiden arvoisiksi.
+
+Kuten hieman ylempänä jo todettiin, Metabase tallentaa käyttäjätiedot sekä käyttäjien luomat tiedot (kuten dashboardit) omaan tietokantaansa, jota se oletusarvoisesti ylläpitää tiedostossa metabase.db.mv.db. Jos käytät JAR-pohjaista Metabasea, luo Metabase tämän tiedoston samaan hakemistoon, missä ajat tiedostoa metabase.jar. Kyseinen Metabasen oma tietokantatiedosto metabase.db.mv.db on toinen projektiin liittyen palautettavista tiedostoista.
+
+Huomaa, että projektiin liittyen ei palauteta esimerkiksi ajoneuvotietokantaa autodata.db. Kun projekti vertaisarvioidaan, on vertaisarvioijan ensimmäinen askel luoda dashboardin käyttämä tietokanta tyhjältä pöydältä uudelleen suorittamalla palautukseen kuuluva kooditiedosto autodata.py.
+
+4. Vertaisarviointi (20 pistettä)
+
+Kun projektin palautusaikaraja (su 10.5 klo 23:59) on umpeutunut, alkaa projektin vertaisarviointijakso. Vertaisarviointijakso kestää su 17.5 klo 23:59 saakka. Vertaisarvioinnista annetaan tarkempia ohjeita ma 5.4 olevassa (ja samalla kurssin viimeisessä) zoom-tilaisuudessa. Asiallisesti tehdystä (esim. dashboardin kutakin tiiltä kohden on annettu vähintään muutaman lauseen pituinen palaute) vertaisarvioinnista saa 20 pistettä. Vertaisarviointi on pakollinen osa projektia! Jos vertaisarvioinnin jättää tekemättä, ei omee projektipalautusta hyväksytä.
