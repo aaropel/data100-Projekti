@@ -1,0 +1,66 @@
+
+wetodev.rd.tuni.fi
+Projekti [120 p.] (aikaraja su 10.5 klo 23:59)
+11–14 minutes
+
+Projektissa luodaan Suomessa rekisteröityjä autoja koskevaa dataa kuvaileva ns. "dashboard" käyttäen Metabase-raportointijärjestelmää.
+
+Projektin saa tehdä 1-3 hengen ryhmässä.
+1. Ajoneuvodata ja sen esikäsittely (20 pistettä)
+
+Projektissa käytetään Traficomin (alias Liikenne- ja viestintäministeriö) osoitteessa https://tieto.traficom.fi/fi/avoin-data#accordion-63420 tarjoaman zip-tiedoston Ajoneuvorekisteri.zip sisältämää tiedostoa TieliikenneAvoinData_31_12_2025.csv. Sivuston kuvauksen mukaan "Ajoneuvojen avoin data -aineisto sisältää kaikkien liikennekäytössä olevien ajoneuvojen rekisteröinti-, hyväksyntä- ja teknisiä tietoja Traficomin ylläpitämästä liikenneasioiden rekisteristä.". Lisäksi on hyvä ladata samassa paikassa tarjottava tiedosto Ajoneuvotiedot_avoin_data_luokitukset_24.01.2023.xlsx, joka kuvailee datan sisältöä (kuten milaista tietoa datan eri sarakkeet tarkemmin ottaen sisältävät).
+
+Ajoneuvodata tulee esikäsitellä alikappaleessa 1.1 kuvatulla tavalla. Osana projektia tulee palauttaa Python-kooditiedosto autodata.py, jonka suorittaminen avaa edellämainitun tiedoston TieliikenneAvoinData_31_12_2025.csv, esikäsittelee sen sisältämät tiedot alla kuvatulla tavalla ja kirjoittaa esikäsittelyn lopputuloksena syntyneen tietojoukon sqlite3-tietokantatiedostoon nimeltä autodata.db. Koodin tulee olettaa, että syötetiedosto on samassa hakemistossa (eli se avaa tiedoston "TieliikenneAvoinData_31_12_2025.csv" ilman mitään polkumäärettä tms. esim. Pandas-kirjastolla).
+1.1 Ajoneuvodatan esikäsittely
+
+Huomaa, että tiedostoa TieliikenneAvoinData_31_12_2025.csv lukevalle funktiolle pitänee antaa parametreiksi sopiva merkistökoodaus ja sarakkeiden erotinmerkki.
+
+Ajoneuvodataa karsitaan / korjaillaan seuraavalla tavalla. Lopputuloksena on tietojoukko, joka kuvaa Suomessa yksityiskäytössä olevia tavallisia henkilöautoja. Alla viitataan monessa kohdassa datan koodiarvoihin, joiden kuvaukset löytyvät ylempänä mainitusta tiedostosta Ajoneuvotiedot_avoin_data_luokitukset_24.01.2023.xlsx.
+
+    Jätetään jäljelle vain rivit, joissa:
+        Ajoneuvoluokka on M1 tai M1G (eli kyseessä on henkilöauto).
+        Sarakkeen ajoneuvonkaytto arvo on 1.0 (eli ajoneuvo on yksityiskäytössä).
+        Korityyppi on AA, AB, AC, AD, AE tai 1.7 (esim. matkailuautot tms. erikoistapaukset jäävät pois).
+        Sarakkeessa kayttovoima on jokin arvo.
+    Jätetään jäljelle vain seuraavat 13 saraketta:
+    ensirekisterointipvm, kayttoonottopvm, vari, omamassa, ajonKokPituus, ajonLeveys, kayttovoima, merkkiSelvakielinen, mallimerkinta, kaupallinenNimi, kunta, NEDC_Co2 ja matkamittarilukema.
+    Sarakkeen kunta koodiarvot korvataan kuntien nimillä.
+        Kuntakoodeja vastaavat kuntien nimet poimitaan kuntarajoja kuvaavasta tiedostosta kuntarajat.json (joka on mahdollisesti jo tuttu: se oli karttadataa koskevan harjoitustehtävän "Kuntien nettomuutto" syötetiedosto).
+            Ohjelma olettaa, että tämä tiedosto on samassa hakemistossa eli avaa sen käyttäen suoraan tiedoston nimeä "kuntarajat.json" ilman mitään polkumäärettä tms.
+        Datasta poistetaan rivit, joilla ei ole arvoa sarakkeessa kunta tai joiden koodia vastaavaa kunnan nimeä ei löydy tiedostosta kuntarajat.json.
+    Sarakkeiden kayttoonottopvm ja ensirekisterointipvm arvot muunnetaan datetime-arvoiksi.
+        Jos muotoa YYYYMMDD oleva päivämäärän neljä viimeistä merkkiä ovat "0000" eli tieto esittää vain vuoden, tulee osa "0000" ensin muuntaa muotoon "0101", jolloin lopputuloksena on kyseisen vuoden tammikuun ensimmäinen päivä.
+        Datassa säilytetään vain ne rIvit, joille saadaan datetime-arvot kumpaankin sarakkeeseen kayttoonottopvm ja ensirekisterointipvm.
+    Kaikkien sähköautojen (eli kayttovoima on 4.0) CO2-päästöiksi (eli sarakkeeseen NEDC_Co2) asetetaan arvo 0.
+        Alkuperäisessä datassa on sekaisin arvoja 0 sekä puuttuvia arvoja, ja tämä askel yhdenmukaistaa kaikkiin arvon 0.
+    Sarakkeen vari puuttuvat arvot yhdenmukaistetaan asettamalla arvoksi pd.NA jos arvo on -1.
+    Ensin kaksi seuraavanlaista korjausta merkkiSelvakielinen sarakkeeseen:
+        Riveillä, joissa kaupallinenNimi on "SEBRING" tai "CROSSFIRE", asetetaan sarakkeen merkkiSelvakielinen arvoksi "Chrysler".
+        Riveillä, joissa kaupallinenNimi on "XJ" ja merkkiSelvakielinen on "Daimler", asetetaan sarakkeen merkkiSelvakielinen arvoksi "Jaguar".
+    Sen jälkeen yhdenmukaistetaan / korjataan sarakkeen merkkiSelvakielinen sisältämiä merkkitietoja seuraavilla korvauksilla:
+        Arvot "QUATTRO" ja "Quattro" korvataan arvolla "Audi".
+        Arvot "ALPINA", "Alpina", "BMW Alpina", "BMW i" ja "BWW" korvataan arvolla "BMW".
+        Arvo "GM Daewoo" korvataan arvolla "Daewoo".
+        Arvot "FORD-CNG-TECHNIK" ja "Ford-TEC" korvataan arvolla "Ford".
+        Arvo "Hundai" korvataan arvolla "Hyundai".
+        Arvo "Jaguar Land Rover Limited" korvataan arvolla "Jaguar".
+        Arvot "Lada-Vaz" ja "Niva" korvataan arvolla "Lada".
+        Arvot "DaimlerChrysler", "Daimler", "MERCEDES-AMG", "Mercedes-AMG" ja "Mercedes-Benz-CI" korvataan arvolla "Mercedes-Benz".
+        Arvo "BMW MINI" korvataan arvolla "Mini".
+        Arvo "POLESTAR" korvataan arvolla "Polestar".
+        Arvo "SALEEN" korvataan arvolla "Saleen".
+        Arvot "SKD" ja "Skida" korvataan arvolla "Skoda".
+        Arvot "TESLA MOTORS" ja "Tesla Motors" korvataan arvolla "Tesla".
+        Arvo "THINK" korvataan arvolla "Think".
+        Arvo "TOYOTA" korvataan arvolla "Toyota".
+        Arvot "VOLKSWAGEN", "VW" ja "Volkswagen, VW" korvataan arvolla "Volkswagen".
+    Lopuksi pyri tekemään vielä mahdollisia lisäkorjauksia automerkkitietoihin (tarkastele sarakkeen merkkiSelvakielinen sisältöä unique() -funktiolla).
+
+Datajoukosta voisi löytyä esimerkiksi seuraavanlaiset rivit:
+ensirekisterointipvm 	kayttoonottopvm 	vari 	omamassa 	ajonKokPituus 	ajonLeveys 	kayttovoima 	merkkiSelvakielinen 	mallimerkinta 	kaupallinenNimi 	kunta 	NEDC_Co2 	matkamittarilukema
+2003-10-02 	2003-10-02 	6 	1462.0 	4670.0 	1760.0 	1.0 	Honda 	4D ACCORD SEDAN 2.0-CL75/268 	ACCORD 	Tampere 	190.0 	287106.0
+2006-03-17 	2006-03-17 	Y 	1270.0 	4410.0 	1710.0 	1.0 	Toyota 	5D COROLLA STW 1.6-ZZE121L-DWMNKW/260 	COROLLA 	Ähtäri 	172.0 	155944.0
+
+Kun data on esikäsitelty, se kirjoitetaan lopuksi sqlite3-tietokantatiedostoon nimeltä autodata.db.
+
+Aseta kaikki edellä kuvatut askeleet suorittava Python-koodi tiedostoon autodata.py. Varmista, että kyseisen tiedoston ajaminen tapaan python autodata.py tuottaa halutunlaisen sqlite3-tietokantatiedoston.
