@@ -1,4 +1,3 @@
-wetodev.rd.tuni.fi
 Projekti [120 p.] (aikaraja su 10.5 klo 23:59)
 11–14 minutes
 
@@ -81,7 +80,7 @@ Kun Metabase käynnistetään ensimmäistä kertaa, pitää siihen luoda vähint
 
 3. Ajoneuvo-dashboardin teko Metabasella (80 pistettä [+30 bonuspistettä])
 
-Kirjaudu Metabaseen sen käyttöönoton yhteydessä luomallasi käyttäjätunnuksella data100@tuni.fi ja salasanalla data100 ja lisää siihen tietokanta, joka luetaan luvussa 1 kuvatulla tavalla luodusta sqlite3-tietokantatiedostosta autodata.db. Aseta kyseinen tietokantatiedostosamaan hakemistoon kuin metabase.jar ja varmista, että Metabase viittaa tiedostoon ilman mitään polkua muodossa autodata.db. Luo tämän jälkeen kokoelmaan "Your personal collection" (jos Metabasen käyttöliittymä on englanniksi) uusi dashboard nimeltä "Suomen autokanta", joka esittää ajoneuvodatasta erilaisia tietoja. Tehtävänannossa ei määritetä aivan tarkkaan, mitä ja miten dashboardissa tulee esittää. Dashboard pisteytetään seuraavasti (kunkin kohdan toteutus tuottaa kohdassa mainitun määrän lisäpisteitä):
+Kirjaudu Metabaseen sen käyttöönoton yhteydessä luomallasi käyttäjätunnuksella ja salasanalla ja lisää siihen tietokanta, joka luetaan luvussa 1 kuvatulla tavalla luodusta sqlite3-tietokantatiedostosta autodata.db. Aseta kyseinen tietokantatiedostosamaan hakemistoon kuin metabase.jar ja varmista, että Metabase viittaa tiedostoon ilman mitään polkua muodossa autodata.db. Luo tämän jälkeen kokoelmaan "Your personal collection" (jos Metabasen käyttöliittymä on englanniksi) uusi dashboard nimeltä "Suomen autokanta", joka esittää ajoneuvodatasta erilaisia tietoja. Tehtävänannossa ei määritetä aivan tarkkaan, mitä ja miten dashboardissa tulee esittää. Dashboard pisteytetään seuraavasti (kunkin kohdan toteutus tuottaa kohdassa mainitun määrän lisäpisteitä):
 
     +10 pistettä: dashboardissa on ainakin yksi dataa sellaisenaan taulukkomuodossa esittävä tiili.
     +10 pistettä: dashboardissa on ainakin yksi dataa yhteenvetomaisesti (jonkinlaisia tilastollisia tunnuslukuja) taulukkomuodossa esittävä tiili.
@@ -99,7 +98,3 @@ Dashboardiin pitää sisällyttää lisäksi yksi tiili, jonka sisällä on teks
 Kuten hieman ylempänä jo todettiin, Metabase tallentaa käyttäjätiedot sekä käyttäjien luomat tiedot (kuten dashboardit) omaan tietokantaansa, jota se oletusarvoisesti ylläpitää tiedostossa metabase.db.mv.db. Jos käytät JAR-pohjaista Metabasea, luo Metabase tämän tiedoston samaan hakemistoon, missä ajat tiedostoa metabase.jar. Kyseinen Metabasen oma tietokantatiedosto metabase.db.mv.db on toinen projektiin liittyen palautettavista tiedostoista.
 
 Huomaa, että projektiin liittyen ei palauteta esimerkiksi ajoneuvotietokantaa autodata.db. Kun projekti vertaisarvioidaan, on vertaisarvioijan ensimmäinen askel luoda dashboardin käyttämä tietokanta tyhjältä pöydältä uudelleen suorittamalla palautukseen kuuluva kooditiedosto autodata.py.
-
-4. Vertaisarviointi (20 pistettä)
-
-Kun projektin palautusaikaraja (su 10.5 klo 23:59) on umpeutunut, alkaa projektin vertaisarviointijakso. Vertaisarviointijakso kestää su 17.5 klo 23:59 saakka. Vertaisarvioinnista annetaan tarkempia ohjeita ma 5.4 olevassa (ja samalla kurssin viimeisessä) zoom-tilaisuudessa. Asiallisesti tehdystä (esim. dashboardin kutakin tiiltä kohden on annettu vähintään muutaman lauseen pituinen palaute) vertaisarvioinnista saa 20 pistettä. Vertaisarviointi on pakollinen osa projektia! Jos vertaisarvioinnin jättää tekemättä, ei omee projektipalautusta hyväksytä.
